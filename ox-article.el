@@ -15,23 +15,12 @@
                                    :translate-alist '((template . blog-html-template)))
 
 (defun blog-html-template (contents info)
-  (concat
-   "<!DOCTYPE html>\n"
-   (format "<html lang=\"%s\">\n" (plist-get info :language))
-   "<head>\n"
-   (format "<meta charset=\"%s\">\n"
-           (coding-system-get org-html-coding-system 'mime-charset))
-   (format "<title>%s</title>\n"
-           (org-export-data (or (plist-get info :title) "") info))
-   (format "<meta name=\"author\" content=\"%s\">\n"
-           (org-export-data (plist-get info :author) info))
-   "</head>\n"
-   "<body>\n"
-   (format "<h1 class=\"title\">%s</h1>\n"
-           (org-export-data (or (plist-get info :title) "") info))
-   contents
-   "</body>\n"
-   "</html>\n"))
+  (let* ((org-html--build-head
+         (lambda (info) (concat
+                         (org-html--build-head info)
+                         "<link rel=\"canonical\" href=\"https://blog.example.com/dresses/green-dresses-are-awesome\" />"
+                         ))))
+    (org-html-template contents info)))
 
 ;;; End-user functions
 ;;;###autoload
