@@ -1,6 +1,6 @@
 ;;; ox-article.el --- Article Back-End for Org Export Engine -*- lexical-binding: t; -*-
 
-;; Author: Anurag Peshne <anurag.peshne AT gmail DOT com>
+;; Author: Anurag Peshne <anurag DOT peshne AT gmail DOT com>
 ;; Keywords: org, blog, article
 
 ;;; Commentary:
@@ -10,17 +10,20 @@
 
 ;;; Code:
 (require 'ox-html)
+(require 'cl-lib)
 
 (org-export-define-derived-backend 'blog-html 'html
                                    :translate-alist '((template . blog-html-template)))
 
 (defun blog-html-template (contents info)
-  (let* ((org-html--build-head
-         (lambda (info) (concat
-                         (org-html--build-head info)
-                         "<link rel=\"canonical\" href=\"https://blog.example.com/dresses/green-dresses-are-awesome\" />"
-                         ))))
-    (org-html-template contents info)))
+  (let ((orig-org-html--build-head (symbol-function 'org-html--build-head)))
+    (cl-letf (((symbol-function 'org-html--build-head)
+               (lambda (info)
+                 (concat
+                  (funcall orig-org-html--build-head info)
+                  "<link rel=\"canonical\" href=\"https://blog.example.com/dresses/green-dresses-are-awesome\" />\n"
+                  ))))
+      (org-html-template contents info))))
 
 ;;; End-user functions
 ;;;###autoload
