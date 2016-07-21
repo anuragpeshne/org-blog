@@ -16,12 +16,20 @@
                                    :translate-alist '((template . blog-html-template)))
 
 (defun blog-html-template (contents info)
-  (let ((orig-org-html--build-head (symbol-function 'org-html--build-head)))
+  (let* ((orig-org-html--build-head (symbol-function 'org-html--build-head))
+        (site-url "https://anuragpeshne.github.io")
+        (location-file-pair (split-string (plist-get info :input-file) "org-files" ))
+        (location (car location-file-pair))
+        (html-file-path (replace-regexp-in-string
+                         "\.org"
+                         "\.html"
+                         (car (cdr location-file-pair)))))
     (cl-letf (((symbol-function 'org-html--build-head)
                (lambda (info)
                  (concat
                   (funcall orig-org-html--build-head info)
-                  "<link rel=\"canonical\" href=\"https://blog.example.com/dresses/green-dresses-are-awesome\" />\n"
+                  (format "<link rel=\"canonical\" href=\"%s\" />\n"
+                          (concat site-url html-file-path))
                   ))))
       (org-html-template contents info))))
 
