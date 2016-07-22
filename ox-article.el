@@ -23,15 +23,43 @@
         (html-file-path (replace-regexp-in-string
                          "\.org"
                          "\.html"
-                         (car (cdr location-file-pair)))))
+                         (car (cdr location-file-pair))))
+        (contents (concat
+                   contents
+                   (if (string-match "essays" html-file-path)
+                       (blog-html-get-disqus-comment-code (concat
+                                                           site-url
+                                                           html-file-path)
+                                                          html-file-path))
+                   "")))
     (cl-letf (((symbol-function 'org-html--build-head)
                (lambda (info)
                  (concat
                   (funcall orig-org-html--build-head info)
                   (format "<link rel=\"canonical\" href=\"%s\" />\n"
-                          (concat site-url html-file-path))
-                  ))))
+                          (concat site-url html-file-path))))))
       (org-html-template contents info))))
+
+(defun blog-html-get-disqus-comment-code (page-url page-identifier)
+  (concat
+   "<div id=\"disqus_thread\"></div>
+<script>
+    var disqus_config = function () {\n"
+   (format "this.page.url = \"%s\";\n" page-url)
+   (format "this.page.identifier = \"%s\";\n" page-identifier)
+   "};
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//anuragpeshne.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the "
+   "<a href=\"https://disqus.com/?ref_noscript\" rel=\"nofollow\">"
+   "comments powered by Disqus.</a></noscript>"))
 
 ;;; End-user functions
 ;;;###autoload
