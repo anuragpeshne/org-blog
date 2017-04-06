@@ -26,7 +26,8 @@
                          (car (cdr location-file-pair))))
         (contents (concat
                    contents
-                   (if (string-match "essays" html-file-path)
+                   (if (or (string-match "essays" html-file-path)
+                           (string-match "notes" html-file-path))
                        (blog-html-get-disqus-comment-code (concat
                                                            site-url
                                                            html-file-path)
