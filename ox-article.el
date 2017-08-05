@@ -26,8 +26,9 @@
                          (car (cdr location-file-pair))))
         (contents (concat
                    contents
-                   (if (or (string-match "essays" html-file-path)
-                           (string-match "notes" html-file-path))
+                   (if (string-match "essays" html-file-path)
+                       (creative-commons-license-code))
+                   (if (string-match "essays" html-file-path)
                        (blog-html-get-disqus-comment-code (concat
                                                            site-url
                                                            html-file-path)
@@ -40,6 +41,12 @@
                   (format "<link rel=\"canonical\" href=\"%s\" />\n"
                           (concat site-url html-file-path))))))
       (org-html-template contents info))))
+
+(defun creative-commons-license-code ()
+  (concat
+   "<a rel=\"license\" href=\"http://creativecommons.org/licenses/by/4.0/\">"
+   "<img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by/4.0/80x15.png\" />"
+   "</a>"))
 
 (defun blog-html-get-disqus-comment-code (page-url page-identifier)
   (concat
@@ -68,12 +75,14 @@
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a blog article."
   (interactive)
+  (load-theme 'leuven 't)
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep))
          (org-export-coding-system org-html-coding-system))
     ;; export to html use article
     (org-export-to-file
         'blog-html file subtreep visible-only body-only ext-plist)))
+  ;;(load-theme 'zenburn 't))
 
 (provide 'ox-article)
 
