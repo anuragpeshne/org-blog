@@ -13,8 +13,22 @@
 (require 'cl-lib)
 
 (org-export-define-derived-backend 'blog-html 'html
-                                   :translate-alist '((template . blog-html-template)))
+  :translate-alist '((template . blog-html-template)
+                     (src-block . codefy-src-block)))
 
+(defun codefy-src-block (src-block contents info)
+  (let* ((pre-string (org-html-src-block src-block contents info))
+            (codefied-opening-string (replace-regexp-in-string
+                                      "^<pre class=\"src src-"
+                                      "<pre><code class=\"src language-"
+                                      pre-string))
+            (codefied-opening-string (replace-regexp-in-string
+                                      "</pre>"
+                                      "</code></pre>"
+                                      codefied-opening-string)))
+    codefied-opening-string))
+
+(setq org-html-htmlize-output-type 'nil)
 (defun blog-html-template (contents info)
   (let* ((orig-org-html--build-head (symbol-function 'org-html--build-head))
         (site-url "https://anuragpeshne.github.io")
@@ -39,8 +53,14 @@
                  (concat
                   (funcall orig-org-html--build-head info)
                   (format "<link rel=\"canonical\" href=\"%s\" />\n"
-                          (concat site-url html-file-path))))))
+                          (concat site-url html-file-path))
+                  (get-prismjs-headers)))))
       (org-html-template contents info))))
+
+(defun get-prismjs-headers ()
+  (concat
+   "<link href=\"/css/prism.css\" rel=\"stylesheet\" />"
+   "<script src=\"/js/prism.js\"></script>"))
 
 (defun creative-commons-license-code ()
   (concat
