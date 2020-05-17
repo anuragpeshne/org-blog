@@ -95,14 +95,12 @@
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a blog article."
   (interactive)
-  (load-theme 'leuven 't)
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep))
          (org-export-coding-system org-html-coding-system))
     ;; export to html use article
     (org-export-to-file
         'blog-html file subtreep visible-only body-only ext-plist)))
-  ;;(load-theme 'zenburn 't))
 
 (provide 'ox-article)
 
