@@ -54,7 +54,7 @@
                  (concat
                   (funcall orig-org-html--build-head info)
                   (format "<link rel=\"canonical\" href=\"%s\" />\n"
-                          (concat site-url html-file-path))
+                          (concat org-html-link-home html-file-path))
                   (get-prismjs-headers)))))
       (org-html-template contents info))))
 
