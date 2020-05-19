@@ -29,9 +29,10 @@
     codefied-opening-string))
 
 (setq org-html-htmlize-output-type 'nil)
+(setq org-html-link-home  "https://anuragpeshne.github.io")
+(setq org-html-doctype "html5")
 (defun blog-html-template (contents info)
   (let* ((orig-org-html--build-head (symbol-function 'org-html--build-head))
-        (site-url "https://anuragpeshne.github.io")
         (location-file-pair (split-string (plist-get info :input-file) "org-files" ))
         (location (car location-file-pair))
         (html-file-path (replace-regexp-in-string
@@ -44,7 +45,7 @@
                        (creative-commons-license-code))
                    (if (string-match "essays" html-file-path)
                        (blog-html-get-disqus-comment-code (concat
-                                                           site-url
+                                                           org-html-link-home
                                                            html-file-path)
                                                           html-file-path))
                    "")))
