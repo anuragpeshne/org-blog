@@ -105,8 +105,6 @@
 
 (provide 'ox-article)
 
-;; Local variables:
-;; generated-autoload-file:
 ;; End:
 
 ;;; ox-article.el ends here
